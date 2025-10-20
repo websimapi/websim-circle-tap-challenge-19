@@ -2,18 +2,20 @@ import { jsxDEV } from "react/jsx-dev-runtime";
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, interpolate, Audio, Img, spring, useVideoConfig, Sequence } from "remotion";
 const GameCanvas = ({ frameData, config }) => {
-  const { angle, targetStartAngle, targetSize, success, fail, targetColor } = frameData;
+  const { angle, targetStartAngle, targetSize, success, fail, targetColor, pulseEffect } = frameData;
   const { difficulty, difficulties, colors } = config;
   const { trackWidthFactor } = difficulties[difficulty];
   const radius = 45;
   const lineWidth = radius * 2 * trackWidthFactor;
+  const currentPulseEffect = pulseEffect || 0;
+  const pulseRadius = radius * (1 + currentPulseEffect * 0.05);
   return /* @__PURE__ */ jsxDEV("svg", { viewBox: "-55 -55 110 110", style: { width: "100%", height: "100%" }, children: [
     /* @__PURE__ */ jsxDEV(
       "circle",
       {
         cx: "0",
         cy: "0",
-        r: radius,
+        r: pulseRadius,
         fill: "none",
         stroke: colors.secondary,
         strokeWidth: lineWidth,
@@ -23,14 +25,14 @@ const GameCanvas = ({ frameData, config }) => {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 15,
+        lineNumber: 17,
         columnNumber: 13
       }
     ),
     targetSize > 0 && /* @__PURE__ */ jsxDEV(
       "path",
       {
-        d: `M ${radius * Math.cos(targetStartAngle)} ${radius * Math.sin(targetStartAngle)} A ${radius} ${radius} 0 0 1 ${radius * Math.cos(targetStartAngle + targetSize)} ${radius * Math.sin(targetStartAngle + targetSize)}`,
+        d: `M ${pulseRadius * Math.cos(targetStartAngle)} ${pulseRadius * Math.sin(targetStartAngle)} A ${pulseRadius} ${pulseRadius} 0 0 1 ${pulseRadius * Math.cos(targetStartAngle + targetSize * (1 + currentPulseEffect * 0.15))} ${pulseRadius * Math.sin(targetStartAngle + targetSize * (1 + currentPulseEffect * 0.15))}`,
         fill: "none",
         stroke: targetColor || colors.success,
         strokeWidth: lineWidth * 0.95,
@@ -40,7 +42,7 @@ const GameCanvas = ({ frameData, config }) => {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 24,
+        lineNumber: 26,
         columnNumber: 17
       }
     ),
@@ -48,9 +50,9 @@ const GameCanvas = ({ frameData, config }) => {
       "line",
       {
         x1: "0",
-        y1: -(radius - lineWidth / 2),
+        y1: -(pulseRadius - lineWidth / 2),
         x2: "0",
-        y2: -(radius + lineWidth / 2),
+        y2: -(pulseRadius + lineWidth / 2),
         stroke: colors.fail,
         strokeWidth: lineWidth / 2.5,
         strokeLinecap: "butt"
@@ -59,17 +61,17 @@ const GameCanvas = ({ frameData, config }) => {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 34,
+        lineNumber: 36,
         columnNumber: 17
       }
     ) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 33,
+      lineNumber: 35,
       columnNumber: 13
     })
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 13,
+    lineNumber: 15,
     columnNumber: 9
   });
 };
@@ -96,7 +98,7 @@ const LevelDisplay = ({ level, isVisible }) => {
     zIndex: 1
   }, children: level }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 62,
+    lineNumber: 64,
     columnNumber: 9
   });
 };
@@ -118,38 +120,38 @@ const EndScreenOverlay = ({ score, level, user, isGameOver }) => {
     user && /* @__PURE__ */ jsxDEV("div", { style: { position: "absolute", top: "20px", left: "20px", display: "flex", alignItems: "center", gap: "10px", transform: `scale(${scaleIn})` }, children: [
       /* @__PURE__ */ jsxDEV(Img, { src: user.avatar_url, style: { width: "50px", height: "50px", borderRadius: "50%" } }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 100,
+        lineNumber: 102,
         columnNumber: 21
       }),
       /* @__PURE__ */ jsxDEV("span", { style: { fontSize: "24px", fontWeight: "bold", textShadow: "2px 2px 4px #000" }, children: user.username }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 101,
+        lineNumber: 103,
         columnNumber: 21
       })
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 99,
+      lineNumber: 101,
       columnNumber: 18
     }),
     /* @__PURE__ */ jsxDEV("div", { style: { position: "absolute", top: "30px", right: "20px", fontSize: "24px", fontWeight: "bold", textShadow: "2px 2px 4px #000", transform: `scale(${scaleIn})`, textAlign: "right" }, children: [
       /* @__PURE__ */ jsxDEV("div", { children: finalScoreText }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 108,
+        lineNumber: 110,
         columnNumber: 17
       }),
       /* @__PURE__ */ jsxDEV("div", { children: finalLevelText }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 109,
+        lineNumber: 111,
         columnNumber: 17
       })
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 107,
+      lineNumber: 109,
       columnNumber: 13
     })
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 96,
+    lineNumber: 98,
     columnNumber: 9
   });
 };
@@ -158,7 +160,7 @@ const ReplayComposition = ({ replayData }) => {
   if (!replayData || !replayData.frames || replayData.frames.length < 2) {
     return /* @__PURE__ */ jsxDEV(AbsoluteFill, { style: { backgroundColor: "#1a1a2e", color: "white", justifyContent: "center", alignItems: "center" }, children: "Loading replay..." }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 119,
+      lineNumber: 121,
       columnNumber: 16
     });
   }
@@ -188,41 +190,41 @@ const ReplayComposition = ({ replayData }) => {
       score
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 155,
+      lineNumber: 157,
       columnNumber: 21
     }) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 154,
+      lineNumber: 156,
       columnNumber: 17
     }),
     /* @__PURE__ */ jsxDEV(AbsoluteFill, { style: { justifyContent: "center", alignItems: "center" }, children: [
       /* @__PURE__ */ jsxDEV(LevelDisplay, { level, isVisible: !showEndScreen || isDuringEndScreen }, `level-${level}`, false, {
         fileName: "<stdin>",
-        lineNumber: 163,
+        lineNumber: 165,
         columnNumber: 17
       }),
       /* @__PURE__ */ jsxDEV("div", { style: { width: "90%", height: "auto", aspectRatio: "1 / 1" }, children: /* @__PURE__ */ jsxDEV(GameCanvas, { frameData: currentFrameData, config }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 165,
+        lineNumber: 167,
         columnNumber: 21
       }) }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 164,
+        lineNumber: 166,
         columnNumber: 17
       })
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 162,
+      lineNumber: 164,
       columnNumber: 13
     }),
     showEndScreen && /* @__PURE__ */ jsxDEV(EndScreenOverlay, { score, level, user: currentUser, isGameOver }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 170,
+      lineNumber: 172,
       columnNumber: 32
     }),
     /* @__PURE__ */ jsxDEV(Audio, { src: "/start_sound.mp3", volume: 0.5 }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 173,
+      lineNumber: 175,
       columnNumber: 13
     }),
     successFrames.map((f, i) => {
@@ -230,11 +232,11 @@ const ReplayComposition = ({ replayData }) => {
       if (frameForAudio < gameEndFrame) {
         return /* @__PURE__ */ jsxDEV(Sequence, { from: frameForAudio, children: /* @__PURE__ */ jsxDEV(Audio, { src: "/success.mp3" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 181,
+          lineNumber: 183,
           columnNumber: 25
         }) }, `success-${i}`, false, {
           fileName: "<stdin>",
-          lineNumber: 180,
+          lineNumber: 182,
           columnNumber: 22
         });
       }
@@ -242,16 +244,16 @@ const ReplayComposition = ({ replayData }) => {
     }),
     isGameOver && /* @__PURE__ */ jsxDEV(Sequence, { from: gameEndFrame - 1, children: /* @__PURE__ */ jsxDEV(Audio, { src: "/fail.mp3" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 190,
+      lineNumber: 192,
       columnNumber: 21
     }) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 189,
+      lineNumber: 191,
       columnNumber: 17
     })
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 151,
+    lineNumber: 153,
     columnNumber: 9
   });
 };

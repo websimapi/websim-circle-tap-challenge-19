@@ -141,6 +141,7 @@ export class Game {
             angle: this.angle,
             targetStartAngle: this.targetStartAngle,
             targetSize: this.targetSize,
+            pulseEffect: this.pulseEffect, // Add pulse effect to replay frame
             score: this.score,
             level: this.level, 
             targetColor: this.currentColorHsl.toString(),
@@ -180,8 +181,9 @@ export class Game {
 
         // Draw target zone
         if (this.targetSize > 0) {
+            const pulseTargetSize = this.targetSize * (1 + this.pulseEffect * 0.15);
             this.ctx.beginPath();
-            this.ctx.arc(0, 0, pulseRadius, this.targetStartAngle, this.targetStartAngle + this.targetSize);
+            this.ctx.arc(0, 0, pulseRadius, this.targetStartAngle, this.targetStartAngle + pulseTargetSize);
             this.ctx.strokeStyle = this.currentColorHsl.toString();
             this.ctx.lineWidth = this.lineWidth * 0.95;
             this.ctx.lineCap = 'round';
@@ -229,6 +231,7 @@ export class Game {
             angle: this.angle,
             targetStartAngle: this.targetStartAngle,
             targetSize: this.targetSize,
+            pulseEffect: this.pulseEffect, // Add pulse effect to replay frame
             score: this.score,
             level: this.level,
             targetColor: this.currentColorHsl.toString(),
@@ -242,8 +245,9 @@ export class Game {
     handleTap() {
         if (this.gameState !== 'playing') return;
         
+        const pulseTargetSize = this.targetSize * (1 + this.pulseEffect * 0.15);
         const angleTolerance = Math.atan2(this.lineWidth / 2.5, this.radius);
-        const inZone = isAngleInArc(this.angle, this.targetStartAngle - angleTolerance, this.targetSize + 2 * angleTolerance);
+        const inZone = isAngleInArc(this.angle, this.targetStartAngle - angleTolerance, pulseTargetSize + 2 * angleTolerance);
 
         if (inZone) {
             playSuccess();
