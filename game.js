@@ -1,4 +1,4 @@
-import { hsl } from 'd-color';
+import { hsl } from 'd3-color';
 import { getHslStringForLevel, isAngleInArc, getComputedColors } from './utils.js';
 import { initAudio, playSuccess, playFail, playStart, getAverageVolume } from './audio.js';
 
